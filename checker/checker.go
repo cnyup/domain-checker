@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"domainchecker/utils"
+	"github.com/cnyup/domain-checker/utils"
 )
 
 type Checker struct {

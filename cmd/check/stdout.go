@@ -3,7 +3,7 @@ package check
 import (
 	"github.com/spf13/cobra"
 
-	"domainchecker/checker"
+	"github.com/cnyup/domain-checker/checker"
 )
 
 var stdoutCmd = &cobra.Command{

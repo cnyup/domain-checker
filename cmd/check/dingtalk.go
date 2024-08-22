@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"domainchecker/checker"
+	"github.com/cnyup/domain-checker/checker"
 )
 
 const CDingUrl = "https://oapi.dingtalk.com/robot/send?access_token"

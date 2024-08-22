@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"domainchecker/cmd/check"
+	"github.com/cnyup/domain-checker/cmd/check"
 )
 
 var rootCmd = &cobra.Command{
