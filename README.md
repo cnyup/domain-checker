@@ -10,8 +10,18 @@
 
 ## 如何安装
 ### 源码安装
-1. git clone
-2. make build
+需要有相关的环境
+- go 1.22.3
+- git
+- make
+1. 获取源码
+```shell
+git clone https://github.com/cnyup/domain-checker.git 
+```
+2. 编译
+```shell
+make build 
+```
 3. 运行二进制文件查看参数
 
 
