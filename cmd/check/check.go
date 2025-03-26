@@ -1,37 +1,55 @@
 package check
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/spf13/cobra"
+	"github.com/xmapst/logx"
+
+	"github.com/busybox-org/cert-checker/internal/core/checker"
+	"github.com/busybox-org/cert-checker/internal/resolvers"
 )
 
-var filePath string
-var fileDir string
-
-var suffix string
-var days int
-
-var accessToken string
-
-var Check = &cobra.Command{
-	Use:   "check",
-	Short: "check cert",
-	Long:  "check cert",
-}
-
-func init() {
-	// 公用参数
-	Check.PersistentFlags().StringVarP(&filePath, "path", "f", "", "cert file path")
-	Check.PersistentFlags().StringVarP(&fileDir, "dir", "d", "", "cert file dir")
-	Check.PersistentFlags().StringVarP(&suffix, "suffix", "", "", "file suffix match")
-	Check.PersistentFlags().IntVarP(&days, "days", "", 15, "Alarm threshold days default 15")
-
-	// dir 和 path 必须存在一个
-	Check.MarkFlagsOneRequired("path", "dir")
-	// path 和 regex 互斥  指定文件名时 不支持正则
-	Check.MarkFlagsMutuallyExclusive("path", "suffix")
-	//  path 和 dir 互斥  可以但没有必要指定两个
-	Check.MarkFlagsMutuallyExclusive("path", "dir")
-
-	Check.AddCommand(stdoutCmd)
-	Check.AddCommand(dingTalkCmd)
+func New() *cobra.Command {
+	root := &cobra.Command{
+		Use:           "check",
+		Short:         "Check the expiration date of the domain name",
+		Long:          "Check the expiration date of the domain name",
+		SilenceUsage:  true,
+		SilenceErrors: true,
+		FParseErrWhitelist: cobra.FParseErrWhitelist{
+			UnknownFlags: true,
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			fmt.Println(resolvers.GetExternalIP())
+			paths, err := cmd.Flags().GetStringSlice("path")
+			if err != nil {
+				logx.Fatalln(err)
+			}
+			suffix := cmd.Flags().Lookup("suffix").Value.String()
+			days, err := cmd.Flags().GetInt("days")
+			if err != nil {
+				logx.Fatalln(err)
+			}
+			check := checker.New(suffix)
+			res, err := check.CheckCerts(paths...)
+			if err != nil {
+				logx.Fatalln(err)
+			}
+			for _, v := range res {
+				if v.ExpiredDays < 0 {
+					_, _ = fmt.Fprintf(os.Stderr, "Path: %s, Doname:%s, ExpiredDay: %d, Is the domain name still valid!!!\n",
+						v.Path, v.DomainName, v.ExpiredDays)
+					continue
+				}
+				if v.ExpiredDays < days {
+					_, _ = fmt.Fprintf(os.Stdout, "Path: %s, Doname:%s, ExpiredDay: %d\n",
+						v.Path, v.DomainName, v.ExpiredDays)
+				}
+			}
+			return nil
+		},
+	}
+	return root
 }

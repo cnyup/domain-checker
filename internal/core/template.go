@@ -1,10 +1,10 @@
-package checker
+package core
 
-var DingTemplate = `{
-"msgtype": "markdown",
-"markdown": {
-"title": "nginx domain check cert alert",
-"text": "###  **主机名**: {{ .EcsInfo.Name }}  
+import (
+	"text/template"
+)
+
+var Template = `###  **主机名**: {{ .EcsInfo.Name }}  
 ###  **内网IP**:  {{ .EcsInfo.LanIp }}  
 ###  **外网IP**:  {{ .EcsInfo.WanIp }}  
 {{ if not .ThresholdDomain }}{{ else }}
@@ -21,4 +21,6 @@ ___________________________
 {{ range $val := .ExpireDomain -}}> **{{ $val.DomainName }}**
 {{ end -}}  
 > ##### <font color=FF0000> 上述域名已经过期，请确认并进行后续处理  </font> {{ end }} 
-"}}`
+`
+
+var tmpl = template.Must(template.New("").Parse(Template))

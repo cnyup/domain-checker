@@ -1,0 +1,17 @@
+[Unit]
+Description=CertChecker - Check SSL Certs Validity
+Documentation=https://github.com/busybox-org/cert-checker.git
+After=network.target nss-lookup.target
+
+[Service]
+NoNewPrivileges=true
+ExecStart=/usr/local/bin/CertChecker
+Restart=always
+RestartSec=10s
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+TasksMax=infinity
+
+[Install]
+WantedBy=multi-user.target

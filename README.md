@@ -16,7 +16,7 @@
 - make
 1. 获取源码
 ```shell
-git clone https://github.com/cnyup/domain-checker.git 
+git clone https://github.com/busybox-org/domain-checker.git 
 ```
 2. 编译
 ```shell
